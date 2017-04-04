@@ -11,7 +11,7 @@ getwithin(dat, binmid, binwid)
 
 \item{binmid}{numeric of midpoint depth of bin}
 
-\item{binwidth}{numeric of bin width}
+\item{binwid}{numeric of bin width}
 }
 \description{
 Get relevant parameters for integrated metabolism estimates within a single depth bin

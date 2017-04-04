@@ -3,7 +3,7 @@
 #'
 #' @param dat data frame for one depth bin
 #' @param binmid numeric of midpoint depth of bin
-#' @param binwidth numeric of bin width
+#' @param binwid numeric of bin width
 #' 
 #' @export
 #' 
@@ -40,7 +40,7 @@ getwithin <- function(dat, binmid, binwid){
       Kl = calckl(temp, sal, atemp, wspd, bp),
       Ka = Kl / 24 / binwid, # binwid is specific to the bin
       Ds = Ka * (dosat - do), # from Thiebault mmol o2 m-3 hr-1
-      sig = swRho(sal, temp, bp * 0.01) # kg m-3
+      sig = swRho(sal, temp, 10) # set for 10 decibars, output kg m-3
     )
   
   return(dat)
