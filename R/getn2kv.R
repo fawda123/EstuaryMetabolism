@@ -17,18 +17,18 @@ getn2kv <- function(dat, g = 9.7963){
     stop('density sig not in data')
   
   # split by bin
-  datest<- split(datest, datest$binmd)
-  bins <- names(datest)
+  dat<- split(dat, dat$binmd)
+  bins <- names(dat)
   
   # get brunt-vaisala buoyancy frequencies between layers
   for(bin in seq_along(bins)){
     
     # get current bin sw density
-    isig <- datest[[bin]] %>% 
+    isig <- dat[[bin]] %>% 
       select(sig)
   
     # get current bin midpoint
-    binimd <- names(datest)[bin] %>% 
+    binimd <- names(dat)[bin] %>% 
       as.numeric
     
     # get bin one layer down
@@ -39,11 +39,11 @@ getn2kv <- function(dat, g = 9.7963){
     } else {
       
       # density one bin down
-      dnsig <- datest[[bin + 1]] %>% 
+      dnsig <- dat[[bin + 1]] %>% 
         select(sig)
       
       # midpoint one bin down
-      bindnmd <- names(datest)[bin + 1] %>% 
+      bindnmd <- names(dat)[bin + 1] %>% 
         as.numeric
       
       # brunt valsala freq, s-2
@@ -57,12 +57,12 @@ getn2kv <- function(dat, g = 9.7963){
     # append to output for bin
     ests <- data.frame(cbind(n2, kv))
     names(ests) <- c('n2', 'kv')
-    datest[[bin]] <- data.frame(datest[[bin]], ests)
+    dat[[bin]] <- data.frame(dat[[bin]], ests)
       
   }
   
   # format output
-  out <- do.call('rbind', datest) %>% 
+  out <- do.call('rbind', dat) %>% 
     remove_rownames %>% 
     arrange(datetimestamp, binmd)
   

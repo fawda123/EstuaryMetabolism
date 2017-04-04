@@ -37,9 +37,9 @@ getwithin <- function(dat, binmid, binwid){
     mutate(
       dosat = oxySol(temp, sal, bp / 1013.25), # bp in atm (mb / 1013.25)
       dosat = dosat / 32 * 1000,
-      Kl = calckl(temp, sal, atemp, wspd, bp),
-      Ka = Kl / 24 / binwid, # binwid is specific to the bin
-      Ds = Ka * (dosat - do), # from Thiebault mmol o2 m-3 hr-1
+      kl = calckl(temp, sal, atemp, wspd, bp),
+      ka = kl / 24 / binwid, # binwid is specific to the bin
+      ds = ka * (dosat - do), # from Thiebault mmol o2 m-3 hr-1
       sig = swRho(sal, temp, 10) # set for 10 decibars, output kg m-3
     )
   

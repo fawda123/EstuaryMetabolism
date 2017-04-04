@@ -2,7 +2,7 @@ Package: EstuaryMetabolism
 Type: Package
 Title: Estimate metabolic rates in estuaries
 Version: 0.0.1.9000
-Date: 2017-03-31
+Date: 2017-04-04
 Author: Marcus W. Beck [aut, cre]
 Maintainer: Marcus W. Beck <beck.marcus@epa.gov>
 Description: Estimate metabolic rates in estuaries using the open-water method
