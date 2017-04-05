@@ -19,7 +19,7 @@ getdv <- function(dat){
   dat <- split(dat, dat$binmd)
   bins <- names(dat)
     
-  # get brunt-vaisala buoyancy frequencies between layers
+  # get eddy diffusion in a layer
   for(bin in seq_along(bins)){
     
     # get current bin kv, do, height
