@@ -7,7 +7,9 @@
 findstk(profin, sigdiff = 3, plot = FALSE)
 }
 \arguments{
-\item{profin}{\code{data.frame} o}
+\item{profin}{\code{data.frame} of a single depth profile}
+
+\item{sigdiff}{numeric of density difference beyond which the model is estimated}
 
 \item{plot}{logical if the model is plotted}
 }

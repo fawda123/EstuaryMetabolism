@@ -1,6 +1,7 @@
 #' Optimize stkmod function within depth interval
 #' 
-#' @param profin \code{data.frame} o
+#' @param profin \code{data.frame} of a single depth profile
+#' @param sigdiff numeric of density difference beyond which the model is estimated
 #' @param plot logical if the model is plotted
 #' 
 #' @export
