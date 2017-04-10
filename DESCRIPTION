@@ -5,7 +5,8 @@ Version: 0.0.1.9000
 Date: 2017-04-04
 Author: Marcus W. Beck [aut, cre]
 Maintainer: Marcus W. Beck <beck.marcus@epa.gov>
-Description: Estimate metabolic rates in estuaries using the open-water method
+Description: Estimate metabolic rates in estuaries using the open-water method.
+  This includes an approach using depth profiles.
 BugReports: https://github.com/fawda123/EstuaryMetabolism/issues
 License: CC0
 Imports:

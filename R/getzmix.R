@@ -21,7 +21,7 @@ getzmix <- function(dat, parallel = TRUE, ...) {
   tz <- attr(dat$datetimestamp, 'tzone')
   
   # split dataset by time stamp
-  splts <- split(dat, datest$datetimestamp)
+  splts <- split(dat, dat$datetimestamp)
   
   # process by lapply if not parallel
   if(!parallel){
