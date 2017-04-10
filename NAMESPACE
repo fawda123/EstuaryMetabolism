@@ -2,7 +2,7 @@
 
 export(depsd)
 export(findstk)
-export(getdv)
+export(getdvdz)
 export(getn2kv)
 export(getwithin)
 export(getzmix)
