@@ -1,15 +1,15 @@
-#' Get DO flux between layers from eddy diffusivity (Dv) and mixed-layer deepening (Dz)
+#' Get DO flux between layers from air-sea gas exchange, (Ds), eddy diffusivity (Dv) and mixed-layer deepening (Dz)
 #'
 #' @param dat input data.frame pre-processed with \code{\link{getwithin}}, \code{\link{getn2kv}}, and \code{\link{getzmix}}
 #'
-#' @details DO flux between depth layers from eddy diffusivity is estimated using eqn 8 and DO flux from mixed-layer deepening is estimated from eqn 10 in in Staehr et al. 2012. Negative values are fluxes in and positive values are fluxes out of a depth layer. Estimates of \code{dv} are only applied if the depth layer is shallower than the mixing depth.
+#' @details DO flux between depth layers from air-sea gas exchange is esimated from eqn 9, eddy diffusivity is estimated using eqn 8, and DO flux from mixed-layer deepening is estimated from eqn 10 in in Staehr et al. 2012. Estimates of \code{ds} are only applied if the depth layer is shallower than the mixing depth.
 #' 
-#' @return Input data frame with two additional columns for \code{dv} and \code{dz} as DO flux between layers from eddy diffusivity and mixed-layer deepening (mmol O2 m-3 hr-1)
+#' @return Input data frame with three additional columns for \code{ds}, \code{dv}, and \code{dz} as DO flux from air-sea gas exchange, flux between layers from eddy diffusivity, and flux from mixed-layer deepening (mmol O2 m-3 hr-1)
 #'   
 #' @export
 #' 
 #' @import dplyr tibble
-getdvdz <- function(dat){
+getdsdvdz <- function(dat){
   
   # sanity check
   if(!'kv' %in% names(dat))
@@ -87,11 +87,14 @@ getdvdz <- function(dat){
       
   }
   
-  # format output
+  # format output, get ds
   out <- do.call('rbind', dat) %>% 
     remove_rownames %>% 
     arrange(datetimestamp, binmd) %>% 
-    mutate(dv = ifelse(binmd <= zmix, dv, NA)) # dv only applies if bin is shallower than mixing depth
+    mutate(
+      ds = ka * (dosat - do), # from Thiebault mmol o2 m-3 hr-1
+      ds = ifelse(binmd <= zmix, ds, NA) # ds only applies if bin is shallower than mixing depth
+    )
   
   return(out)
   
