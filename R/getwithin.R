@@ -5,9 +5,18 @@
 #' @param binmid numeric of midpoint depth of bin
 #' @param binwid numeric of bin width
 #' 
+#' @details Input data must have seven columns with \code{datetimestamp}, dissolved oxygen (\code{do_mgl}, mg L-1), salinity (\code{sal}, psu), water temprature (\code{temp}, C), air temperature (\code{atemp}, C), barometric pressur (\code{bp}, mb), and wind speed (\code{wspd}, m s-1). The \code{binmid} and \code{binwid} arguments are for the midpoint and width of the depth bin for the corresponding data (m). 
+#' 
+#' The input data are first transposed to estimate the midpoint values of all observations within each depth bin.  That is, an hour time step on the hour will be returned as an hourly time step every half hour minus one observation.  
+#' 
+#' The function continues to estimate values for delta DO, DO at saturation, the oxygen mass transfer coefficient, the volumetric reaeration coefficient, and water density.
+#' 
+#' @return The input data minus one observations (times the number of depth bins) with additional columns for delta DO (\code{ddo}, mmol o2 m-3 hr-1), DO at saturation (mmol o2), the mass transfer coefficient (m d-1), the volumetric reaeration coefficient (h-1), and water density (set for 10 decibars, output kg m-3).
+#' 
 #' @export
 #' 
 #' @import oce SWMPr
+#' 
 getwithin <- function(dat, binmid, binwid){
 
   # do from mg/l to mmol/m3
@@ -37,7 +46,7 @@ getwithin <- function(dat, binmid, binwid){
     mutate(
       dosat = oxySol(temp, sal, bp / 1013.25), # bp in atm (mb / 1013.25)
       dosat = dosat / 32 * 1000,
-      kl = calckl(temp, sal, atemp, wspd, bp),
+      kl = calckl(temp, sal, atemp, wspd, bp), # m d-1
       ka = kl / 24 / binwid, # binwid is specific to the bin
       sig = swRho(sal, temp, 10) # set for 10 decibars, output kg m-3
     )
