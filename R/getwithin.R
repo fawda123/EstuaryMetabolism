@@ -11,7 +11,7 @@
 #' 
 #' The function continues to estimate values for delta DO, DO at saturation, the oxygen mass transfer coefficient, the volumetric reaeration coefficient, and water density.
 #' 
-#' @return The input data minus one observations (times the number of depth bins) with additional columns for delta DO (\code{ddo}, mmol o2 m-3 hr-1), DO at saturation (mmol o2), the mass transfer coefficient (m d-1), the volumetric reaeration coefficient (h-1), and water density (set for 10 decibars, output kg m-3).
+#' @return The input data minus one observation (times the number of depth bins) with additional columns for delta DO (\code{ddo}, mmol o2 m-3 hr-1), DO at saturation (\code{dosat}, mmol o2), the mass transfer coefficient (\code{kl}, m d-1), the volumetric reaeration coefficient (\code{ka}, h-1), and water density (\code{sig}, set for 10 decibars, output kg m-3).
 #' 
 #' @export
 #' 

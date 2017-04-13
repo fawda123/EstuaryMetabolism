@@ -10,7 +10,7 @@ getdsdvdz(dat)
 \item{dat}{input data.frame pre-processed with \code{\link{getwithin}}, \code{\link{getn2kv}}, and \code{\link{getzmix}}}
 }
 \value{
-Input data frame with three additional columns for \code{ds}, \code{dv}, and \code{dz} as DO flux from air-sea gas exchange, flux between layers from eddy diffusivity, and flux from mixed-layer deepening (mmol O2 m-3 hr-1)
+Input data frame with three additional columns for \code{ds}, \code{dv}, and \code{dz} as DO flux from air-sea gas exchange, flux between layers from eddy diffusivity, and flux from mixed-layer deepening (mmol O2 m-3 hr-1 for all)
 }
 \description{
 Get DO flux between layers from air-sea gas exchange, (Ds), eddy diffusivity (Dv) and mixed-layer deepening (Dz)

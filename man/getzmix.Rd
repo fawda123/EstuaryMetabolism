@@ -14,7 +14,7 @@ getzmix(dat, parallel = TRUE, ...)
 \item{...}{other arguments passed to \code{\link{findstk}}}
 }
 \value{
-The input dataset with two additional column for \code{zmix} and \code{dzmix}, as mixing depth and change in mixing depht (m hr-1). Positive values for \code{dzmix} indicate the volume below the pycnocline is increasing and negative values indicate volume is decreasing.
+The input dataset with two additional columns for \code{zmix} and \code{dzmix}, as mixing depth and change in mixing depth (m hr-1). Positive values for \code{dzmix} indicate the volume below the pycnocline is decreasing and negative values indicate volume is increasing.
 }
 \description{
 Estimate depth of mixing layer

@@ -32,15 +32,11 @@ depsd <- function(dat, maxd = NULL){
   
   # value is width of bin, name is midpoint depth of bind
   names(depsd) <- as.character(deps)
-  depsd <- data.frame(depsd) %>% 
-    rownames_to_column %>% 
-    rename(
-      binmd = rowname,
-      binwd = depsd
-    ) %>% 
+  depsd <- data.frame(binwd = depsd) %>% 
     mutate(
-      binmd = as.numeric(binmd)
-    )
+      binmd = deps
+    ) %>% 
+    select(binmd, binwd)
   
   return(depsd)
 

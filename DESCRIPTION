@@ -11,8 +11,10 @@ BugReports: https://github.com/fawda123/EstuaryMetabolism/issues
 License: CC0
 Imports:
     dplyr,
+    fields,
     oce,
     parallel,
+    purrr,
     SWMPr,
     tibble,
     tidyr

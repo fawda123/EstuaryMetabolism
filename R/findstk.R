@@ -2,6 +2,7 @@
 #' 
 #' @param profin \code{data.frame} of a single depth profile
 #' @param sigdiff numeric of density difference beyond which the model is estimated
+#' @param expand numeric for expansion factor to increase resolution of search
 #' @param plot logical if the model is plotted
 #' 
 #' @export
@@ -14,7 +15,7 @@
 #' 
 #' @return The depth of the mixing layer if \code{plot = FALSE}, otherwise a plot of the stick model.
 #' 
-findstk <- function(profin, sigdiff = 3, plot = FALSE) {
+findstk <- function(profin, sigdiff = 3, expand = 100, plot = FALSE) {
   
   # get relevant columns, remove NA
   profin <- select(profin, binmd, sig) %>% 
@@ -25,7 +26,7 @@ findstk <- function(profin, sigdiff = 3, plot = FALSE) {
 
   # linearly interpolate to avoid sample size issues
   xint <- range(profin$binmd)
-  xint <- seq(xint[1], xint[2], length = 500)
+  xint <- seq(xint[1], xint[2], length = expand)
   yint <- with(profin, approx(binmd, sig, xout = xint)$y)
   ints <- data.frame(binmd = xint, sig = yint)
   

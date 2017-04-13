@@ -22,7 +22,9 @@
 mblight
 }
 \description{
-One year of hourly observations from the Mobile Bay, Middle Bay Lighthouse station were pre-processed for use with this package.  The data include combined water quality and weather data from 2015. The water quality data were taken at approximate 0.5 m depth intervals from the surface (0.5 shallow, 3 deep) and the weather data are repeated for each unique time step across depth bins.
+One year of hourly observations from the Mobile Bay, Middle Bay Lighthouse station were pre-processed for use with this package.  The data include combined water quality and weather data from 2015. The water quality data were taken at approximate 0.5 m depth intervals from the surface (0.5 shallow, 3 deep) and the weather data are repeated for each unique time step across depth bins.  
+ 
+Note that all cases in the data are complete. That is, all time steps have row entries for all even if the actual observations are missing.
 }
 \examples{
 data(mblight)

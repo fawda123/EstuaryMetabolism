@@ -1,13 +1,17 @@
-#' Get Brunt-Vaisala freq (N2), vertical turbulent diffusivity (Kv)
+#' Get Brunt-Vaisala frequency (N2), vertical turbulent diffusivity (Kv)
 #'
 #' @param dat input data.frame pre-processed with \code{\link{getwithin}}
-#' @param g gravity constant, m2/s
+#' @param g gravity constant, m2 s-1
 #'
-#' @details Brunt-Vaisala frequency and the vertical turbulent diffusivity are appended for each row where estimable in \code{dat}. Estimates are based on equations 3 and 4 in Staehr et al. 2012
+#' @details Brunt-Vaisala frequency and the vertical turbulent diffusivity are appended for each row where estimable in \code{dat}. Estimates are based on equations 3 and 4 in Staehr et al. 2012.  Estimated values for each bin are in reference to the current bin and the bin immediately below.  As such, values are not estimated for the deepest depth bin.
 #'
 #' @return Input data frame with two additional columns for \code{n2} (s-2) and \code{kv} (m2 hr-1)
 #' 
 #' @export
+#' 
+#' @references
+#' 
+#' Staehr, P.A., Christensen, J.P.A., Batt, R.D., Read, J.S. 2012. Ecosystem metabolism in a stratified lake. 57(5):1317-1330.
 #' 
 #' @import dplyr tibble
 getn2kv <- function(dat, g = 9.7963){
@@ -34,7 +38,7 @@ getn2kv <- function(dat, g = 9.7963){
     # get bin one layer down
     if(bin == length(bins)){
       
-      ni2 <- NA
+      n2 <- NA
       
     } else {
       

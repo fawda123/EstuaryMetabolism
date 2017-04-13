@@ -4,7 +4,7 @@
 #'
 #' @details DO flux between depth layers from air-sea gas exchange is esimated from eqn 9, eddy diffusivity is estimated using eqn 8, and DO flux from mixed-layer deepening is estimated from eqn 10 in in Staehr et al. 2012. Estimates of \code{ds} are only applied if the depth layer is shallower than the mixing depth.
 #' 
-#' @return Input data frame with three additional columns for \code{ds}, \code{dv}, and \code{dz} as DO flux from air-sea gas exchange, flux between layers from eddy diffusivity, and flux from mixed-layer deepening (mmol O2 m-3 hr-1)
+#' @return Input data frame with three additional columns for \code{ds}, \code{dv}, and \code{dz} as DO flux from air-sea gas exchange, flux between layers from eddy diffusivity, and flux from mixed-layer deepening (mmol O2 m-3 hr-1 for all)
 #'   
 #' @export
 #' 
@@ -88,12 +88,14 @@ getdsdvdz <- function(dat){
   }
   
   # format output, get ds
+  # from Thiebault mmol o2 m-3 hr-1
+  # ds only applies if bin is shallower than mixing depth
   out <- do.call('rbind', dat) %>% 
     remove_rownames %>% 
     arrange(datetimestamp, binmd) %>% 
     mutate(
-      ds = ka * (dosat - do), # from Thiebault mmol o2 m-3 hr-1
-      ds = ifelse(binmd <= zmix, ds, NA) # ds only applies if bin is shallower than mixing depth
+      ds = ka * (dosat - do), 
+      ds = ifelse(binmd <= zmix, ds, NA) 
     )
   
   return(out)

@@ -6,7 +6,7 @@
 #' 
 #' @details This function applies \code{\link{findstk}} and \code{\link{stkmod}} to all profiles in the dataset for convenience.
 #' 
-#' @return The input dataset with two additional column for \code{zmix} and \code{dzmix}, as mixing depth and change in mixing depht (m hr-1). Positive values for \code{dzmix} indicate the volume below the pycnocline is increasing and negative values indicate volume is decreasing.
+#' @return The input dataset with two additional columns for \code{zmix} and \code{dzmix}, as mixing depth and change in mixing depth (m hr-1). Positive values for \code{dzmix} indicate the volume below the pycnocline is decreasing and negative values indicate volume is increasing.
 #' 
 #' @import dplyr parallel tidyr
 #' 
@@ -47,7 +47,7 @@ getzmix <- function(dat, parallel = TRUE, ...) {
     rownames_to_column %>% 
     mutate(rowname = as.POSIXct(rowname, format = '%Y-%m-%d %H:%M:%S', tz = tz)) %>% 
     rename(datetimestamp = rowname) %>% 
-    mutate(dzmix = c(NA, -1 * diff(zmix) / as.double(diff(datetimestamp), units = 'hours')))
+    mutate(dzmix = c(NA, diff(zmix) / as.double(diff(datetimestamp), units = 'hours')))
   
   # join with input data, return
   dat <- left_join(dat, ests, by = 'datetimestamp')
