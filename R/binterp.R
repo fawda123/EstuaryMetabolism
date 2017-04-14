@@ -8,11 +8,16 @@
 #' @import akima
 #' 
 #' @export
-binterp <- function(x, new_grd, ny = 15, nx = NULL, gapsize = NULL) {
+binterp <- function(x, new_grd, ny = 15, gapsize = NULL) {
 
-  # get gaps larger than gapsize
-  gaps <- gapsz(x)
+  # break data by gaps 
+  if(!is.null(gapsize)){
+      
+    # findg gap sizes
+    gaps <- gapsz(x)
 
+  }
+  
   # no missing values in x
   # add mo/yr column for separate interpolation
   x <- na.omit(x) %>% 
@@ -24,6 +29,7 @@ binterp <- function(x, new_grd, ny = 15, nx = NULL, gapsize = NULL) {
     split(.$moyr) %>% 
     lapply(., function(moyr){
 
+      cat(unique(moyr$moyr), '\n')
       
       # no extrap on nx if not provided
       if(is.null(nx))
@@ -54,15 +60,7 @@ binterp <- function(x, new_grd, ny = 15, nx = NULL, gapsize = NULL) {
         select(datetimestamp, everything())
   
       })
-  browser()
-  # reinsert gaps
-  if(!is.null(gapsize)){
-    
-    gaps <- filter(gaps, n >= gapsize)
-    
-    browser()  
-  }
-  
+
   return(out)
   
 }

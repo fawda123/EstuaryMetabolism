@@ -6,31 +6,39 @@
 #' 
 #' @details A gap is defined as missing values for all depths for a single date.
 #' 
-#' @import dplyr
+#' @import dplyr stringi zoo
 #' 
 #' @export
 gapsz <- function(x){
-  
+
   # chk complete missing rows
+  # mval is vector of str and end values for endpoints of missing observations
   chk <- group_by(x, datetimestamp) %>% 
     summarize(
-      mval = !any(!is.na(val))
+      misi = !any(!is.na(val))
+    ) %>% 
+    ungroup %>% 
+    mutate(
+      mval = c(0, diff(misi)), 
+      mval = ifelse(mval == 0, NA, mval),
+      mval = factor(mval, levels = c(-1, 1), labels = c('end', 'str')),
+      mval = as.character(mval)
+      )
+
+  # create unique labels for each continuous chunk 
+  # upper-case is missing chunk, lower-case is complete chunk
+  tosmp <- table(chk$mval)['str']
+  chk <- mutate(chk, 
+    mval = ifelse(mval %in% 'str', stri_rand_strings(tosmp, 5, pattern = '[A-Z]'), mval),
+    mval = ifelse(mval %in% 'end', stri_rand_strings(tosmp, 5, pattern = '[a-z]'), mval),
+    mval = na.locf(mval, na.rm = F),
+    mval = ifelse(is.na(mval), stri_rand_strings(1, 5, pattern = '[a-z]'), mval)
     )
   
-  # data frame of strt, end dates of gaps
-  gaps <- data.frame(
-    gapstr = with(chk, datetimestamp[diff(mval) == 1]),
-    gapend = with(chk, datetimestamp[which(diff(mval) == -1) - 1])
-    )
-  
-  # number of observations in each gap
-  n <- sapply(1:nrow(gaps), function(dts){
-    filter(chk, datetimestamp >= gaps[dts, 1] & datetimestamp <= gaps[dts, 2]) %>% 
-      nrow
-    })
-  
-  # combine n obs with gap start/end
-  gaps <- mutate(gaps, n = n)
+  # length of each chunk
+  gaps <- group_by(chk, mval) %>% 
+    mutate(n = length(misi)) %>% 
+    ungroup
   
   return(gaps)
   

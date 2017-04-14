@@ -15,9 +15,11 @@ Imports:
     oce,
     parallel,
     purrr,
+    stringi,
     SWMPr,
     tibble,
-    tidyr
+    tidyr, 
+    zoo
 LazyData: true
 Depends:
     R (>= 3.2.0)
