@@ -18,7 +18,7 @@
 #' @examples
 #' datprep(mblight)
 datprep <- function(dat, ...){
-  
+
   # interpolate wq data, recombine with wq
   out <- dat %>% 
     gather('var', 'val', -datetimestamp, -depth) %>% 
