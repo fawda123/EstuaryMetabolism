@@ -4,12 +4,14 @@
 \alias{findstk}
 \title{Optimize stkmod function within depth interval}
 \usage{
-findstk(profin, sigdiff = 3, plot = FALSE)
+findstk(profin, sigdiff = 3, expand = 100, plot = FALSE)
 }
 \arguments{
 \item{profin}{\code{data.frame} of a single depth profile}
 
 \item{sigdiff}{numeric of density difference beyond which the model is estimated}
+
+\item{expand}{numeric for expansion factor to increase resolution of search}
 
 \item{plot}{logical if the model is plotted}
 }
