@@ -4,14 +4,12 @@
 \alias{datprep}
 \title{Prep input data}
 \usage{
-datprep(dat, n = 15, wqcols = c("do_mgl", "sal", "temp"))
+datprep(dat, ...)
 }
 \arguments{
 \item{dat}{input \code{data.frame}}
 
-\item{n}{numeric expansion factor for depth bins}
-
-\item{wqcols}{chr string names columns with water quality parameters}
+\item{...}{additional arguments passed  to \code{\link{binterp}}}
 }
 \value{
 The expanded \code{data.frame}

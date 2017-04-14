@@ -4,7 +4,7 @@
 \alias{binterp}
 \title{Bilinear interpolation function}
 \usage{
-binterp(x, new_grd)
+binterp(x, new_grd, ny = 15, nx = NULL, gapsize = NULL)
 }
 \arguments{
 \item{x}{input \code{data.frame} in wide format, first column is datetimestamp, column names are depth bins, z-values are to be interpolated}

@@ -5,23 +5,63 @@
 #' 
 #' @return The expanded \code{data.frame}
 #'
-#' @import fields
+#' @import akima
 #' 
 #' @export
-binterp <- function(x, new_grd) {
+binterp <- function(x, new_grd, ny = 15, nx = NULL, gapsize = NULL) {
 
-  # get interped values
-  int_val <- interp.surface(
-    obj = list(
-      x = as.numeric(unique(new_grd$datetimestamp)),
-      y = as.numeric(names(x)[-1]),
-      z = as.matrix(x[,-1])
-      ),
-    loc = new_grd
-    )
+  # get gaps larger than gapsize
+  gaps <- gapsz(x)
 
-  # combine coords with interp values
-  out <- data.frame(new_grd, val = int_val)
+  # no missing values in x
+  # add mo/yr column for separate interpolation
+  x <- na.omit(x) %>% 
+    mutate(
+      moyr = as.Date(datetimestamp, tz = attr(x$datetimestamp, 'tzone')),
+      moyr = as.character(moyr),
+      moyr = gsub('-[0-9]*$', '', moyr)
+    ) %>% 
+    split(.$moyr) %>% 
+    lapply(., function(moyr){
+
+      
+      # no extrap on nx if not provided
+      if(is.null(nx))
+        nx <- length(unique(moyr$datetimestamp))
+
+      # interpolate
+      newvals <- interp(
+        x = moyr$datetimestamp, 
+        y = moyr$depth,
+        z = moyr$val, 
+        nx = nx, ny = ny
+      )
+      
+      # new z vals are in matrix, format as vector
+      val <- t(newvals$z) %>% 
+        as.numeric
+     
+      # format output
+      out <- expand.grid(newvals$y, newvals$x) %>% 
+        rename(
+          datetimestamp = Var2, 
+          depth = Var1
+        ) %>% 
+        mutate(
+          datetimestamp = as.POSIXct(datetimestamp, origin = '1970-01-01', tz = attr(x$datetimestamp, 'tzone')),
+          val = val
+          ) %>% 
+        select(datetimestamp, everything())
+  
+      })
+  browser()
+  # reinsert gaps
+  if(!is.null(gapsize)){
+    
+    gaps <- filter(gaps, n >= gapsize)
+    
+    browser()  
+  }
   
   return(out)
   

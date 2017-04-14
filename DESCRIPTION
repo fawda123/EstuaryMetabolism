@@ -10,8 +10,8 @@ Description: Estimate metabolic rates in estuaries using the open-water method.
 BugReports: https://github.com/fawda123/EstuaryMetabolism/issues
 License: CC0
 Imports:
+    akima,
     dplyr,
-    fields,
     oce,
     parallel,
     purrr,
