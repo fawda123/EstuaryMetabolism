@@ -4,10 +4,12 @@
 \alias{datprep}
 \title{Prep input data}
 \usage{
-datprep(dat, ...)
+datprep(dat, wqcols = c("do_mgl", "sal", "temp"), ...)
 }
 \arguments{
 \item{dat}{input \code{data.frame}}
+
+\item{wqcols}{chr string of column names to inteprolate across depths, water quality variables only}
 
 \item{...}{additional arguments passed  to \code{\link{binterp}}}
 }
@@ -23,6 +25,8 @@ Input data are linearly interpolated across depth bins and time to fill missing 
 Currently assumes the time vector in the input data has equal time steps.
 }
 \examples{
+\dontrun{
 datprep(mblight)
+}
 }
 

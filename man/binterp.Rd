@@ -2,19 +2,26 @@
 % Please edit documentation in R/binterp.R
 \name{binterp}
 \alias{binterp}
-\title{Bilinear interpolation function}
+\title{Bilinear interpolation function with missing chunk preservation}
 \usage{
-binterp(x, new_grd, ny = 15, nx = NULL, gapsize = NULL)
+binterp(x, ny = 15, gapsize = 1)
 }
 \arguments{
 \item{x}{input \code{data.frame} in wide format, first column is datetimestamp, column names are depth bins, z-values are to be interpolated}
 
-\item{new_grd}{expanded matrix of values to interpolate}
+\item{ny}{numeric for number of observations to expand in the y direction (depth)}
+
+\item{gapsize}{numeric for maximum gap size beyond which chunks are not processed}
 }
 \value{
 The expanded \code{data.frame}
 }
 \description{
-Bilinear interpolation function
+Bilinear interpolation function with missing chunk preservation
+}
+\details{
+This function expands a variable on the depth axis using \code{\link[akima]{interp}}.  A two-dimensional interpolation of time and depth is used to expand the data on the depth axis but is also useful to interpolate values in time when depth data are insufficient to interpolate vertically.  The depth bins are expanded to the divisions provided by \code{ny} and the original time step is preserved in the output data.  
+
+The \code{gapsize} argument specifies the number observations in the native time step beyond which values are not interpolated.  For example, a gapsize of ten will interpolate all values in the dataset except those separated by ten or more time steps.  This is useful because interpolation errors increase with size of the missing chunk.  A gap is considered a time step where all values are missing across the enire depth profile.  The resulting data are interpolated in separate chunks, where the chunks are separated by missing values defined by \code{gapsize}.
 }
 

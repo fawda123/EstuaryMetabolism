@@ -2,7 +2,7 @@
 % Please edit documentation in R/gapsz.R
 \name{gapsz}
 \alias{gapsz}
-\title{Identify gap sizes in time series of depth profiles}
+\title{Identify gaps in time series of depth profiles}
 \usage{
 gapsz(x)
 }
@@ -10,10 +10,10 @@ gapsz(x)
 \item{x}{\code{data.frame} of profile time series in long format}
 }
 \value{
-A \code{data.frame} with three columns for start and end times and gap size.
+A \code{data.frame} with one row per time step and three columns indicating if all profiles are missing for the time step (\code{misi}, \code{TRUE} or \code{FALSE}, a unique identifier for the chunk (\code{mval}, lower-case if chunk is complete data, upper-case if missing data), and number of time observations in the chunk (\code{n}).
 }
 \description{
-Identify gap sizes in time series of depth profiles
+Identify gaps in time series of depth profiles
 }
 \details{
 A gap is defined as missing values for all depths for a single date.

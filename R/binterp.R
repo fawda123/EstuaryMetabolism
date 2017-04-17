@@ -1,53 +1,58 @@
-#' Bilinear interpolation function
+#' Bilinear interpolation function with missing chunk preservation
 #'
 #' @param x input \code{data.frame} in wide format, first column is datetimestamp, column names are depth bins, z-values are to be interpolated
 #' @param ny numeric for number of observations to expand in the y direction (depth)
 #' @param gapsize numeric for maximum gap size beyond which chunks are not processed
-#' @param new_grd expanded matrix of values to interpolate
+#' 
+#' @details This function expands a variable on the depth axis using \code{\link[akima]{interp}}.  A two-dimensional interpolation of time and depth is used to expand the data on the depth axis but is also useful to interpolate values in time when depth data are insufficient to interpolate vertically.  The depth bins are expanded to the divisions provided by \code{ny} and the original time step is preserved in the output data.  
+#' 
+#' The \code{gapsize} argument specifies the number observations in the native time step beyond which values are not interpolated.  For example, a gapsize of ten will interpolate all values in the dataset except those separated by ten or more time steps.  This is useful because interpolation errors increase with size of the missing chunk.  A gap is considered a time step where all values are missing across the enire depth profile.  The resulting data are interpolated in separate chunks, where the chunks are separated by missing values defined by \code{gapsize}. 
 #' 
 #' @return The expanded \code{data.frame}
 #'
 #' @import akima stringi zoo
 #' 
 #' @export
-binterp <- function(x, new_grd, ny = 15, gapsize = NULL) {
+binterp <- function(x, ny = 15, gapsize = 1) {
 
-  set.seed(5)
-  # break data by gaps 
-  if(!is.null(gapsize)){
-      
-    # find gap sizes
-    gaps <- gapsz(x) %>% 
-      mutate(
-        int = ifelse(misi & n >= gapsize, TRUE, FALSE),
-        int = c(0, diff(int)), 
-        int = ifelse(int == 0, NA, int),
-        int = factor(int, levels = c(-1, 1), labels = c('end', 'str')),
-        int = as.character(int)
-      )
-    
-    # create unique labels for each continuous chunk 
-    # upper-case is missing chunk, lower-case is complete chunk
-    tosmp <- table(gaps$int)['str']
-    gaps <- mutate(gaps, 
-      int = ifelse(int %in% 'str', stri_rand_strings(tosmp, 5, pattern = '[A-Z]'), int),
-      int = ifelse(int %in% 'end', stri_rand_strings(tosmp, 5, pattern = '[a-z]'), int),
-      int = na.locf(int, na.rm = F),
-      int = ifelse(is.na(int), stri_rand_strings(1, 5, pattern = '[a-z]'), int)
-      ) %>% 
-      select(datetimestamp, int)
-    
-    # combine with x, remove the gaps, add month, group by continuous and month
-    x <- left_join(x, gaps, by = 'datetimestamp') %>% 
-      filter(grepl('[a-z]', int)) %>% 
-      split(.$int)
-        
-  }
+  # find gap sizes
+  # id strt/end of continuous chunks, which may include gaps if less than gapsize
+  gaps <- gapsz(x) %>% 
+    mutate(
+      int = ifelse(misi & n >= gapsize, TRUE, FALSE),
+      int = c(0, diff(int)), 
+      int = ifelse(int == 0, NA, int),
+      int = factor(int, levels = c(-1, 1), labels = c('end', 'str')),
+      int = as.character(int)
+    )
   
+  # create unique labels for each continuous chunk 
+  # upper-case is missing chunk, lower-case is complete chunk
+  tosmp <- table(gaps$int)['str']
+  gaps[gaps$int %in% 'str', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[A-Z]')
+  gaps[gaps$int %in% 'end', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[a-z]')
+  
+  # repeat unique labels in each chunk
+  gaps <- mutate(gaps, 
+    int = na.locf(int, na.rm = F),
+    int = ifelse(is.na(int), stri_rand_strings(1, 5, pattern = '[a-z]'), int), 
+    int = forcats::as_factor(int)
+    ) %>% 
+    select(datetimestamp, int)
+
+  # combine with x, remove the gaps, split by chunk
+  tointerp <- left_join(x, gaps, by = 'datetimestamp') %>% 
+    filter(grepl('[a-z]', int)) %>% 
+    mutate(
+      int = as.character(int),
+      int = forcats::as_factor(int)
+      ) %>% 
+    split(.$int)
+        
   # chunk wise interpolation
-  x <- lapply(x, function(chnk){
+  chnks <- lapply(tointerp, function(chnk){
     
-    cat(unique(chnk$int), '\n')
+    cat('Chunk', unique(chnk$int), '\n')
     
     # no missing values for interpolation
     chnk <- na.omit(chnk)
@@ -56,11 +61,16 @@ binterp <- function(x, new_grd, ny = 15, gapsize = NULL) {
     nx <- length(unique(chnk$datetimestamp))
 
     # akima fails if values to interp vary in scale
-    browser()
+    # rescale values similarly
+    xin <- chnk$datetimestamp %>% 
+      as.numeric
+    yin <- chnk$depth %>% 
+      scales::rescale(., to = range(xin))
+
     # interpolate
     newvals <- interp(
-      x = chnk$datetimestamp,
-      # y = scale(chnk$depth, # try rescaling this in range of x,
+      x = xin,
+      y = yin,
       z = chnk$val, 
       nx = nx, ny = ny
     )
@@ -69,24 +79,28 @@ binterp <- function(x, new_grd, ny = 15, gapsize = NULL) {
     val <- t(newvals$z) %>%
       as.numeric
 
-    # format output
-    out <- expand.grid(newvals$y, newvals$x) %>%
+    # format output for expanded values
+    chnkout <- expand.grid(newvals$y, newvals$x) %>%
       rename(
         datetimestamp = Var2,
         depth = Var1
       ) %>%
       mutate(
         datetimestamp = as.POSIXct(datetimestamp, origin = '1970-01-01', tz = attr(x$datetimestamp, 'tzone')),
+        depth = scales::rescale(depth, to = range(chnk$depth)),
         val = val
         ) %>%
       select(datetimestamp, everything())
 
-    return(out)
+    return(chnkout)
 
     })
 
-  stop('recombine the chunks dumbass')
-  
-  return(x)
+  # recombine the chunks
+  out <- do.call('rbind', chnks) %>% 
+    tibble::remove_rownames(.) %>% 
+    arrange(datetimestamp, depth)
+ 
+  return(out)
   
 }
