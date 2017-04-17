@@ -17,12 +17,12 @@ datprep(dat, wqcols = c("do_mgl", "sal", "temp"), ...)
 The expanded \code{data.frame}
 }
 \description{
-Prepare input data for estimating metatolic rates
+Prepare input data for estimating metabolic rates
 }
 \details{
-Input data are linearly interpolated across depth bins and time to fill missing values and inrease resolution. This is a wrapper to \code{\link{binterp}}.
+Input data are linearly interpolated across depth bins and time to fill missing values and increase resolution. This is a wrapper to \code{\link{binterp}}, more details therein. This function processes the water quality variables in \code{dat} by passing the observations as nested data frames to \code{\link{binterp}}.
 
-Currently assumes the time vector in the input data has equal time steps.
+The time vector in the input data must have equal time steps.
 }
 \examples{
 \dontrun{

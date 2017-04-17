@@ -20,8 +20,8 @@ The expanded \code{data.frame}
 Bilinear interpolation function with missing chunk preservation
 }
 \details{
-This function expands a variable on the depth axis using \code{\link[akima]{interp}}.  A two-dimensional interpolation of time and depth is used to expand the data on the depth axis but is also useful to interpolate values in time when depth data are insufficient to interpolate vertically.  The depth bins are expanded to the divisions provided by \code{ny} and the original time step is preserved in the output data.  
+This function expands a variable on the depth axis using \code{\link[akima]{interp}}.  A two-dimensional interpolation of time and depth is used to expand the data on the depth axis.  This is also useful to interpolate values in time when depth data are insufficient to interpolate vertically.  The depth bins are expanded to the divisions provided by \code{ny} and the original time step is preserved in the output data.  
 
-The \code{gapsize} argument specifies the number observations in the native time step beyond which values are not interpolated.  For example, a gapsize of ten will interpolate all values in the dataset except those separated by ten or more time steps.  This is useful because interpolation errors increase with size of the missing chunk.  A gap is considered a time step where all values are missing across the enire depth profile.  The resulting data are interpolated in separate chunks, where the chunks are separated by missing values defined by \code{gapsize}.
+The \code{gapsize} argument specifies the number of observations in the native time step beyond which values are not interpolated.  For example, a gapsize of ten will interpolate all values in the dataset except those separated by ten or more time steps.  This is useful because interpolation errors increase with size of the missing chunk.  A gap is considered one or more continuous time steps where all values are missing across the enire depth profile.  The data are interpolated in separate chunks, where the chunks are separated by missing values defined by \code{gapsize}.
 }
 

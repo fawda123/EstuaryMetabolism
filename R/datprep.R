@@ -1,14 +1,14 @@
 #' Prep input data
 #' 
-#' Prepare input data for estimating metatolic rates
+#' Prepare input data for estimating metabolic rates
 #' 
 #' @param dat input \code{data.frame}
 #' @param wqcols chr string of column names to inteprolate across depths, water quality variables only
 #' @param ... additional arguments passed  to \code{\link{binterp}}
 #' 
-#' @details Input data are linearly interpolated across depth bins and time to fill missing values and inrease resolution. This is a wrapper to \code{\link{binterp}}.
+#' @details Input data are linearly interpolated across depth bins and time to fill missing values and increase resolution. This is a wrapper to \code{\link{binterp}}, more details therein. This function processes the water quality variables in \code{dat} by passing the observations as nested data frames to \code{\link{binterp}}.
 #' 
-#' Currently assumes the time vector in the input data has equal time steps. 
+#' The time vector in the input data must have equal time steps. 
 #' 
 #' @return The expanded \code{data.frame}
 #' 
