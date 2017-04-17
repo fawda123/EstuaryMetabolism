@@ -28,18 +28,32 @@ gapsz <- function(x){
   # create unique labels for each continuous chunk 
   # upper-case is missing chunk, lower-case is complete chunk
   tosmp <- table(chk$mval)['str']
-  chk[chk$mval %in% 'str', 'mval'] <- stri_rand_strings(tosmp, 5, pattern = '[A-Z]')
-  chk[chk$mval %in% 'end', 'mval'] <- stri_rand_strings(tosmp, 5, pattern = '[a-z]')
   
-  # repeat unique labels in each chunk
-  chk <- mutate(chk,
-    mval = na.locf(mval, na.rm = F),
-    mval = ifelse(is.na(mval), stri_rand_strings(1, 5, pattern = '[a-z]'), mval),
-    mval = forcats::as_factor(mval)
-    )
+  # do not label separately if no missing values
+  if(is.na(tosmp)){
+    
+    chk$mval <- stri_rand_strings(1, 5, pattern = '[a-z]')
+    
+  # otherwise labels are separate
+  } else {
+    
+    # unique upper/lower chr strings for chunk labels
+    chk[chk$mval %in% 'str', 'mval'] <- stri_rand_strings(tosmp, 5, pattern = '[A-Z]')
+    chk[chk$mval %in% 'end', 'mval'] <- stri_rand_strings(tosmp, 5, pattern = '[a-z]')
+    
+    # repeat unique labels in each chunk
+    chk <- mutate(chk,
+      mval = na.locf(mval, na.rm = F),
+      mval = ifelse(is.na(mval), stri_rand_strings(1, 5, pattern = '[a-z]'), mval)
+      )
+    
+  }
   
   # length of each chunk
-  gaps <- group_by(chk, mval) %>% 
+  gaps <- mutate(chk, 
+        mval = forcats::as_factor(mval)
+    ) %>% 
+    group_by(mval) %>% 
     mutate(n = length(misi)) %>% 
     ungroup
 

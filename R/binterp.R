@@ -29,13 +29,29 @@ binterp <- function(x, ny = 15, gapsize = 1) {
   # create unique labels for each continuous chunk 
   # upper-case is missing chunk, lower-case is complete chunk
   tosmp <- table(gaps$int)['str']
-  gaps[gaps$int %in% 'str', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[A-Z]')
-  gaps[gaps$int %in% 'end', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[a-z]')
   
-  # repeat unique labels in each chunk
+  # do not label separately if no missing values
+  if(is.na(tosmp)){
+    
+    gaps$int <- stri_rand_strings(1, 5, pattern = '[a-z]')
+    
+  # otherwise labels are separate
+  } else {
+    
+    # unique upper/lower chr strings for chunk labels
+    gaps[gaps$int %in% 'str', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[A-Z]')
+    gaps[gaps$int %in% 'end', 'int'] <- stri_rand_strings(tosmp, 5, pattern = '[a-z]')
+    
+    # repeat unique labels in each chunk
+    gaps <- mutate(gaps, 
+      int = na.locf(int, na.rm = F),
+      int = ifelse(is.na(int), stri_rand_strings(1, 5, pattern = '[a-z]'), int)
+      )
+    
+  }
+  
+  # chunk label as factor
   gaps <- mutate(gaps, 
-    int = na.locf(int, na.rm = F),
-    int = ifelse(is.na(int), stri_rand_strings(1, 5, pattern = '[a-z]'), int), 
     int = forcats::as_factor(int)
     ) %>% 
     select(datetimestamp, int)
@@ -76,18 +92,21 @@ binterp <- function(x, ny = 15, gapsize = 1) {
     )
     
     # new z vals are in matrix, format as vector
-    val <- t(newvals$z) %>%
+    val <- newvals$z %>%
       as.numeric
+    
+    # depth vals, do not back-transform in function
+    depth <- seq(min(chnk$depth), max(chnk$depth), length = ny)
 
     # format output for expanded values
-    chnkout <- expand.grid(newvals$y, newvals$x) %>%
+    chnkout <- expand.grid(newvals$x, depth) %>%
       rename(
-        datetimestamp = Var2,
-        depth = Var1
+        datetimestamp = Var1,
+        depth = Var2
       ) %>%
       mutate(
-        datetimestamp = as.POSIXct(datetimestamp, origin = '1970-01-01', tz = attr(x$datetimestamp, 'tzone')),
-        depth = scales::rescale(depth, to = range(chnk$depth)),
+        datetimestamp = as.POSIXct(datetimestamp, origin = '1970-01-01', 
+          tz = attr(x$datetimestamp, 'tzone')),
         val = val
         ) %>%
       select(datetimestamp, everything())
