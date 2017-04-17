@@ -13,6 +13,8 @@ Imports:
     akima,
     dplyr,
     forcats,
+    ggplot2,
+    gridExtra,
     oce,
     parallel,
     purrr,

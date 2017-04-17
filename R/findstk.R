@@ -64,12 +64,18 @@ findstk <- function(profin, sigdiff = 3, expand = 100, plot = FALSE) {
   if(!plot) return(brk)
     
   # create plot
-  ests <- stkmod(brk, ints, est = T)
+  ests <- stkmod(brk, ints, est = T) %>% 
+    data.frame
   
-  plot(sig ~ binmd, profin)
-  with(ests, {
-    segments(x0 = xout[1], x1 = xout[2], y0 = yout[1])
-    segments(x0 = xout[2], x1 = xout[3], y0 = yout[2], y1 = yout[3])
-    })
+  p1 <- ggplot2::ggplot(profin, ggplot2::aes(x = binmd, y = sig)) + 
+    ggplot2::geom_point(size = 2, alpha = 0.6) + 
+    ggplot2::geom_path(data = ests, ggplot2::aes(x = xout, y = yout)) + 
+    ggplot2::geom_point(data = ests[2, ], ggplot2::aes(x = xout, y = yout), size = 4, fill = 'lightgreen', pch = 21) + 
+    ggplot2::scale_x_reverse('Depth (m)') +
+    ggplot2::scale_y_continuous('Sigma') + 
+    ggplot2::coord_flip() + 
+    ggplot2::theme_bw() + 
+    ggplot2::ggtitle(label = NULL, subtitle = paste('Zmix =', round(ests[2, 1], 3)))
+  return(p1)
         
 }  
