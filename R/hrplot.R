@@ -26,7 +26,7 @@ hrplot <- function(dat, obs, widths = c(0.7, 0.2, 1), colpal = 'Spectral'){
   thm <- ggplot2::theme_bw() + 
     ggplot2::theme(
       legend.title = ggplot2::element_blank(),
-      axis.text.x = ggplot2::element_text(size = 7),
+      axis.text.x = ggplot2::element_text(size = 9),
       panel.grid.minor = ggplot2::element_blank(),
       panel.grid.major = ggplot2::element_blank()
       )
@@ -41,7 +41,7 @@ hrplot <- function(dat, obs, widths = c(0.7, 0.2, 1), colpal = 'Spectral'){
       Depth = forcats::fct_rev(Depth)
       )
   
-  p1 <- ggplot2::ggplot(toplo2, ggplot2::aes(x = Depth, y = val, group = var)) + 
+  p1 <- ggplot2::ggplot(toplo1, ggplot2::aes(x = Depth, y = val, group = var)) + 
     ggplot2::geom_point(size = 3) + 
     ggplot2::geom_path() +
     ggplot2::coord_flip() + 
