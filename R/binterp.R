@@ -88,7 +88,8 @@ binterp <- function(x, ny = 15, gapsize = 1) {
       x = xin,
       y = yin,
       z = chnk$val, 
-      nx = nx, ny = ny
+      nx = nx, ny = ny,
+      linear = FALSE
     )
     
     # new z vals are in matrix, format as vector
